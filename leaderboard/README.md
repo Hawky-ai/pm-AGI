@@ -8,7 +8,7 @@ sdk_version: 4.36.0
 app_file: app.py
 pinned: true
 license: mit
-short_description: LLM benchmark for Performance Marketing (Meta Ads + Google Ads)
+short_description: LLM benchmark for Performance Marketing
 ---
 
 # PM-AGI Leaderboard

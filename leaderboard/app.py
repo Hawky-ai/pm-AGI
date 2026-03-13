@@ -13,8 +13,8 @@ import pandas as pd
 
 # ─── Load Results ─────────────────────────────────────────────────────────────
 
-RESULTS_DIR = Path(__file__).parent.parent / "results"
-DATASET_PATH = Path(__file__).parent.parent / "benchmark" / "dataset.json"
+RESULTS_DIR = Path(__file__).parent / "results"
+DATASET_PATH = Path(__file__).parent / "benchmark" / "dataset.json"
 
 CATEGORY_LABELS = {
     "meta_ads": "Meta Ads",
