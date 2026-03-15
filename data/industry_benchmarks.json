@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "description": "Industry performance benchmarks for Meta Ads and Google Ads by vertical. Community-contributed and curated by hawky.ai.",
+  "last_updated": "2025-06-01",
+  "benchmarks": [
+
+    // ─── META ADS ─────────────────────────────────────────────────────────────
+
+    { "id": "mb_001", "platform": "meta_ads", "industry": "ecommerce_fashion", "metric": "ctr", "value": 1.24, "unit": "%", "campaign_type": "prospecting", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_002", "platform": "meta_ads", "industry": "ecommerce_fashion", "metric": "cpm", "value": 14.50, "unit": "USD", "campaign_type": "prospecting", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_003", "platform": "meta_ads", "industry": "ecommerce_fashion", "metric": "roas", "value": 3.2, "unit": "x", "campaign_type": "all", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_004", "platform": "meta_ads", "industry": "ecommerce_fashion", "metric": "cpa", "value": 28.0, "unit": "USD", "campaign_type": "prospecting", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_005", "platform": "meta_ads", "industry": "ecommerce_beauty", "metric": "ctr", "value": 1.51, "unit": "%", "campaign_type": "prospecting", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_006", "platform": "meta_ads", "industry": "ecommerce_beauty", "metric": "cpm", "value": 12.80, "unit": "USD", "campaign_type": "prospecting", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_007", "platform": "meta_ads", "industry": "ecommerce_beauty", "metric": "roas", "value": 3.8, "unit": "x", "campaign_type": "all", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_008", "platform": "meta_ads", "industry": "saas_b2b", "metric": "cpl", "value": 42.0, "unit": "USD", "campaign_type": "lead_gen", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_009", "platform": "meta_ads", "industry": "saas_b2b", "metric": "ctr", "value": 0.82, "unit": "%", "campaign_type": "lead_gen", "ad_format": "image", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_010", "platform": "meta_ads", "industry": "saas_b2b", "metric": "cpm", "value": 22.40, "unit": "USD", "campaign_type": "lead_gen", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_011", "platform": "meta_ads", "industry": "mobile_apps", "metric": "cpi", "value": 2.80, "unit": "USD", "campaign_type": "app_installs", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_012", "platform": "meta_ads", "industry": "mobile_apps", "metric": "ctr", "value": 2.10, "unit": "%", "campaign_type": "app_installs", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_013", "platform": "meta_ads", "industry": "real_estate", "metric": "cpl", "value": 18.50, "unit": "USD", "campaign_type": "lead_gen", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_014", "platform": "meta_ads", "industry": "real_estate", "metric": "cpm", "value": 9.20, "unit": "USD", "campaign_type": "all", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_015", "platform": "meta_ads", "industry": "fintech", "metric": "cpl", "value": 55.0, "unit": "USD", "campaign_type": "lead_gen", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_016", "platform": "meta_ads", "industry": "fintech", "metric": "cpm", "value": 28.0, "unit": "USD", "campaign_type": "all", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "mb_017", "platform": "meta_ads", "industry": "ecommerce_all", "metric": "hook_rate", "value": 32.0, "unit": "%", "campaign_type": "all", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "mb_018", "platform": "meta_ads", "industry": "ecommerce_all", "metric": "hold_rate", "value": 24.0, "unit": "%", "campaign_type": "all", "ad_format": "video", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    // ─── GOOGLE ADS ───────────────────────────────────────────────────────────
+
+    { "id": "gb_001", "platform": "google_ads", "industry": "ecommerce_fashion", "metric": "ctr", "value": 4.23, "unit": "%", "campaign_type": "search_brand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_002", "platform": "google_ads", "industry": "ecommerce_fashion", "metric": "ctr", "value": 2.10, "unit": "%", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_003", "platform": "google_ads", "industry": "ecommerce_fashion", "metric": "cpc", "value": 0.82, "unit": "USD", "campaign_type": "shopping", "ad_format": "pla", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_004", "platform": "google_ads", "industry": "ecommerce_fashion", "metric": "roas", "value": 5.4, "unit": "x", "campaign_type": "shopping", "ad_format": "pla", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "gb_005", "platform": "google_ads", "industry": "saas_b2b", "metric": "cpc", "value": 8.50, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_006", "platform": "google_ads", "industry": "saas_b2b", "metric": "cpl", "value": 85.0, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_007", "platform": "google_ads", "industry": "saas_b2b", "metric": "ctr", "value": 3.20, "unit": "%", "campaign_type": "search_brand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_008", "platform": "google_ads", "industry": "saas_b2b", "metric": "quality_score_avg", "value": 6.8, "unit": "score", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "gb_009", "platform": "google_ads", "industry": "mobile_apps", "metric": "cpi", "value": 1.20, "unit": "USD", "campaign_type": "uac", "ad_format": "all", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_010", "platform": "google_ads", "industry": "real_estate", "metric": "cpl", "value": 32.0, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_011", "platform": "google_ads", "industry": "real_estate", "metric": "cpc", "value": 4.20, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "gb_012", "platform": "google_ads", "industry": "fintech", "metric": "cpc", "value": 12.80, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_013", "platform": "google_ads", "industry": "fintech", "metric": "cpl", "value": 120.0, "unit": "USD", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" },
+
+    { "id": "gb_014", "platform": "google_ads", "industry": "ecommerce_all", "metric": "impression_share", "value": 42.0, "unit": "%", "campaign_type": "shopping", "ad_format": "pla", "period": "2024_H2", "source": "hawky_ai_internal" },
+    { "id": "gb_015", "platform": "google_ads", "industry": "ecommerce_all", "metric": "search_impression_share", "value": 58.0, "unit": "%", "campaign_type": "search_nonbrand", "ad_format": "rsa", "period": "2024_H2", "source": "hawky_ai_internal" }
+  ],
+  "metrics_glossary": {
+    "ctr": "Click-Through Rate (%)",
+    "cpm": "Cost Per 1000 Impressions (USD)",
+    "cpc": "Cost Per Click (USD)",
+    "cpa": "Cost Per Acquisition (USD)",
+    "cpl": "Cost Per Lead (USD)",
+    "cpi": "Cost Per Install (USD)",
+    "roas": "Return on Ad Spend (x)",
+    "hook_rate": "3-Second Video View Rate (%)",
+    "hold_rate": "25% Video Completion Rate (%)",
+    "quality_score_avg": "Average Google Ads Quality Score (1-10)",
+    "impression_share": "Impression Share (%)",
+    "search_impression_share": "Search Impression Share (%)"
+  },
+  "industries": [
+    "ecommerce_all", "ecommerce_fashion", "ecommerce_beauty", "ecommerce_home",
+    "saas_b2b", "saas_b2c", "mobile_apps", "real_estate",
+    "fintech", "health_wellness", "education", "travel", "food_beverage", "other"
+  ],
+  "platforms": ["meta_ads", "google_ads", "tiktok_ads", "linkedin_ads"],
+  "periods": ["2023_H1", "2023_H2", "2024_H1", "2024_H2", "2025_H1"]
+}
