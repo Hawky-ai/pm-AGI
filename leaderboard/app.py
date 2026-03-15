@@ -482,29 +482,28 @@ def submit_benchmark(platform, industry, metric, value, unit, campaign_type, per
     except Exception:
         return f"✅ Received (read-only Space). Submit via GitHub PR to `data/industry_benchmarks.json`."
 
-def submit_model_result(file_obj, model_name, provider, notes):
-    if file_obj is None:
-        return "⚠️ Please upload a results JSON file."
+def submit_model_result(json_text, model_name, provider, notes):
+    if not json_text or not json_text.strip():
+        return "⚠️ Please paste your results JSON."
     try:
-        content = Path(file_obj.name).read_text()
-        data = json.loads(content)
+        data = json.loads(json_text.strip())
         if "overall_score" not in data:
-            return "⚠️ Invalid results file — missing 'overall_score' field. Run `evaluate.py` to generate."
+            return "⚠️ Invalid results — missing 'overall_score' field. Run `evaluate.py` to generate."
         score = data.get("overall_score", 0) * 100
         total = data.get("total_questions", 0)
-        return f"""✅ **Result file validated!**
+        return f"""✅ **Result validated!**
 
 **Model:** {data.get('model', model_name)}
 **Overall Score:** {score:.1f}%
 **Questions:** {total}
 
 **Next step:** Open a Pull Request to [github.com/Hawky-ai/pm-AGI](https://github.com/Hawky-ai/pm-AGI)
-adding your file to the `results/` directory. It will appear on the leaderboard after merge.
+adding your JSON to the `results/` directory. It will appear on the leaderboard after merge.
 """
     except json.JSONDecodeError:
-        return "⚠️ Invalid JSON file. Please upload the output from `evaluate.py`."
+        return "⚠️ Invalid JSON. Please paste the raw output from `evaluate.py`."
     except Exception as e:
-        return f"⚠️ Error reading file: {e}"
+        return f"⚠️ Error: {e}"
 
 # ─── Build App ────────────────────────────────────────────────────────────────
 
@@ -749,7 +748,7 @@ Then upload the JSON file below to validate it, and open a Pull Request.
                                 choices=["OpenAI","Anthropic","Google","Meta","Mistral AI","DeepSeek","Other"],
                                 value="OpenAI", label="Provider"
                             )
-                        mr_file   = gr.File(label="Upload results JSON file", file_types=[".json"])
+                        mr_file   = gr.Textbox(label="Paste results JSON", lines=8, placeholder='{\n  "model": "your-model",\n  "overall_score": 0.82,\n  ...\n}')
                         mr_notes  = gr.Textbox(label="Notes (optional)", placeholder="Quantization, prompting strategy, etc.")
                         mr_btn    = gr.Button("Validate & Submit", variant="primary")
                         mr_status = gr.Markdown("")
@@ -812,4 +811,4 @@ Built by [hawky.ai](https://hawky.ai) · MIT License · [GitHub](https://github.
 
 if __name__ == "__main__":
     app = create_app()
-    app.launch()
+    app.launch(server_name="0.0.0.0", server_port=7860)
