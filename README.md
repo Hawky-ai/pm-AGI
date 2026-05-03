@@ -23,17 +23,18 @@ PM-AGI measures LLM performance across four critical dimensions of performance m
 
 ---
 
-## Benchmark Stats
+## Benchmark Stats (v2)
 
 | Metric | Value |
 |---|---|
-| Total Questions | 100 |
-| Meta Ads Questions | 30 |
-| Google Ads Questions | 30 |
+| Total Questions | 494 |
+| Meta Ads Questions | 227 |
+| Google Ads Questions | 227 |
 | Critical Thinking Questions | 20 |
 | Action-Based Questions | 20 |
-| Question Types | MCQ, Open-Ended, Scenario-Based |
-| Difficulty Levels | Easy, Medium, Hard |
+| Question Types | MCQ (302), Action-Based / Open-Ended (192) |
+| Difficulty Levels | Easy (14), Medium (165), Hard (315) |
+| Reasoning Types | Recall (219), Adversarial (80), Diagnostic (69), Quantitative (70), Creative Strategy (56) |
 
 ---
 
@@ -76,6 +77,7 @@ Each question in `benchmark/dataset.json` follows this schema:
   "subcategory": "bidding_strategy",
   "difficulty": "medium",
   "type": "mcq",
+  "reasoning_type": "recall",
   "question": "...",
   "options": {"A": "...", "B": "...", "C": "...", "D": "..."},
   "answer": "B",
@@ -86,8 +88,14 @@ Each question in `benchmark/dataset.json` follows this schema:
 
 **Question Types:**
 - `mcq` — Multiple choice, single correct answer
-- `open_ended` — Free-form answer evaluated against key criteria
-- `action_based` — Scenario with expected actions/reasoning
+- `action_based` — Scenario with expected actions/reasoning, evaluated by LLM-judge against `answer_criteria` rubric
+
+**Reasoning Types (v2):**
+- `recall` — Platform knowledge & best practices
+- `adversarial` — Trap questions with plausible outdated-playbook distractors
+- `diagnostic` — Multi-step root-cause reasoning
+- `quantitative` — Math + tradeoffs + stated assumptions
+- `creative_strategy` — Experiment design, A/B methodology, iteration systems
 
 ---
 
@@ -96,10 +104,22 @@ Each question in `benchmark/dataset.json` follows this schema:
 | Type | Scoring |
 |---|---|
 | MCQ | 1.0 if exact match, 0.0 otherwise |
-| Open-Ended | LLM-as-judge (0.0–1.0) against rubric |
-| Action-Based | LLM-as-judge (0.0–1.0) against expected actions |
+| Action-Based / Open-Ended | LLM-as-judge (0.0–1.0) against `answer_criteria` rubric |
 
 **Overall Score** = weighted average across all categories.
+
+**v2 Result Output** — beyond the overall + per-category breakdown, evaluate.py now reports per-reasoning-type scores so you can see whether your model's strength is recall vs diagnostic vs adversarial vs quantitative vs creative-strategy reasoning.
+
+```
+By Reasoning Type:
+  recall                 92.4%  (219 questions)
+  adversarial            54.1%  (80 questions)
+  diagnostic             61.8%  (69 questions)
+  quantitative           58.7%  (70 questions)
+  creative_strategy      68.4%  (56 questions)
+```
+
+The recall-vs-reasoning gap is the load-bearing signal of the benchmark.
 
 ---
 
