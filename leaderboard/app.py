@@ -617,15 +617,15 @@ def create_app():
                 with gr.Row():
                     refresh_btn = gr.Button("🔄 Refresh", size="sm", variant="secondary", scale=0)
                 lb_table = gr.DataFrame(value=build_main_df(results), interactive=False, wrap=True)
-                gr.Plot(value=chart_overall(results))
+                overall_plot = gr.Plot(value=chart_overall(results))
                 with gr.Row():
-                    with gr.Column(): gr.Plot(value=chart_difficulty(results))
-                    with gr.Column(): gr.Plot(value=chart_mcq_vs_action(results))
+                    with gr.Column(): difficulty_plot = gr.Plot(value=chart_difficulty(results))
+                    with gr.Column(): mcq_plot = gr.Plot(value=chart_mcq_vs_action(results))
 
                 def do_refresh():
                     r = load_results()
                     return build_main_df(r), stats_html(r), chart_overall(r), chart_difficulty(r), chart_mcq_vs_action(r)
-                refresh_btn.click(do_refresh, outputs=[lb_table, stats_box, gr.Plot(), gr.Plot(), gr.Plot()])
+                refresh_btn.click(do_refresh, outputs=[lb_table, stats_box, overall_plot, difficulty_plot, mcq_plot])
 
             # ── 2. Category Deep Dive ───────────────────────────────────────
             with gr.Tab("📊 Category Deep Dive"):
