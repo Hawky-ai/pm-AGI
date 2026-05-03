@@ -13,38 +13,49 @@ tags:
 - evaluation
 - llm-evaluation
 - advertising
-pretty_name: PM-AGI Benchmark
+- reasoning
+pretty_name: PM-AGI Benchmark v2
 size_categories:
 - n<1K
 ---
 
-# PM-AGI Benchmark 🎯
+# PM-AGI Benchmark v2 🎯
 
-**The first open-source LLM benchmark for Performance Marketing.**
+**The open-source LLM reasoning benchmark for Performance Marketing.**
 
-Developed by [hawky.ai](https://hawky.ai) — evaluating how well LLMs reason, plan, and act in real-world **Meta Ads** and **Google Ads** scenarios.
+Developed by [hawky.ai](https://hawky.ai) — evaluating how well LLMs **reason** about real-world **Meta Ads** and **Google Ads** scenarios. v2 (494 questions) is built to surface the gap between knowledge recall and genuine reasoning.
 
-## Dataset Summary
+## Dataset Summary (v2)
 
-PM-AGI contains **100 expert-crafted questions** across 4 categories of performance marketing knowledge:
+PM-AGI v2 contains **494 expert-crafted questions** across 4 categories and **5 reasoning types**:
 
 | Category | Questions | Focus |
 |---|---|---|
-| Meta Ads | 30 | Campaign structure, targeting, bidding, creative, CAPI, measurement |
-| Google Ads | 30 | Search, Smart Bidding, PMax, Quality Score, attribution |
-| Critical Thinking | 20 | Data interpretation, budget decisions, competitive analysis |
-| Action-Based | 20 | Scenario troubleshooting, optimization, scaling |
+| Meta Ads | 227 | Campaign structure, targeting, bidding, creative, CAPI, Advantage+, iOS/SKAN, attribution |
+| Google Ads | 227 | Search, Smart Bidding, PMax, Quality Score, attribution, Demand Gen, feed quality |
+| Critical Thinking | 20 | Cross-cutting data interpretation, budget decisions, competitive analysis |
+| Action-Based | 20 | Real-world optimization scenarios |
+
+## Reasoning Types (v2 — what kind of thinking each question tests)
+
+| Reasoning Type | Questions | What It Tests |
+|---|---|---|
+| `recall` | 219 | Platform knowledge & best-practice MCQs |
+| `adversarial` | 80 | Trap questions defeating pattern-match on outdated 2019-era playbooks |
+| `diagnostic` | 69 | Multi-step root-cause reasoning over anomalous campaign data |
+| `quantitative` | 70 | Budget allocation, marginal ROAS, LTV math, stated assumptions |
+| `creative_strategy` | 56 | A/B test design, experiment methodology, iteration systems |
 
 ## Question Types
 
-- **MCQ** (63 questions) — Single correct answer, scored 1.0 or 0.0
-- **Action-Based** (37 questions) — Open scenario evaluated by LLM judge (0.0–1.0)
+- **MCQ** (302 questions) — Single correct answer, scored 1.0 or 0.0
+- **Action-Based** (192 questions) — Open scenario evaluated by LLM judge (0.0–1.0) against 5–10 expert rubric criteria per question
 
 ## Difficulty Distribution
 
-- Easy: 9 questions
-- Medium: 50 questions
-- Hard: 41 questions
+- Easy: 14 questions
+- Medium: 165 questions
+- Hard: 315 questions (reasoning-heavy by design)
 
 ## Usage
 

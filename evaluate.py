@@ -285,6 +285,7 @@ def run_evaluation(args) -> dict:
     # Run evaluation
     results = []
     category_scores = {}
+    reasoning_type_scores = {}
     total_score = 0.0
 
     for i, question in enumerate(questions):
@@ -292,6 +293,7 @@ def run_evaluation(args) -> dict:
         q_type = question["type"]
         category = question["category"]
         difficulty = question["difficulty"]
+        reasoning_type = question.get("reasoning_type", "recall")  # v2: backwards-compat default
 
         print(f"[{i+1:3d}/{len(questions)}] {q_id} ({q_type}, {difficulty})...", end=" ", flush=True)
 
@@ -310,11 +312,16 @@ def run_evaluation(args) -> dict:
             category_scores[category] = {"total": 0.0, "count": 0}
         category_scores[category]["total"] += score
         category_scores[category]["count"] += 1
+        if reasoning_type not in reasoning_type_scores:
+            reasoning_type_scores[reasoning_type] = {"total": 0.0, "count": 0}
+        reasoning_type_scores[reasoning_type]["total"] += score
+        reasoning_type_scores[reasoning_type]["count"] += 1
 
         result = {
             "id": q_id,
             "category": category,
             "subcategory": question.get("subcategory"),
+            "reasoning_type": reasoning_type,
             "difficulty": difficulty,
             "type": q_type,
             "score": score,
@@ -359,9 +366,19 @@ def run_evaluation(args) -> dict:
         for d, v in difficulty_scores.items()
     }
 
+    # v2: reasoning-type breakdown
+    reasoning_type_summary = {
+        rt: {
+            "score": v["total"] / v["count"],
+            "count": v["count"],
+            "percentage": f"{(v['total'] / v['count']) * 100:.1f}%"
+        }
+        for rt, v in reasoning_type_scores.items()
+    }
+
     # Final report object
     report = {
-        "benchmark": "PM-AGI Benchmark v1.0.0",
+        "benchmark": "PM-AGI Benchmark v2.0.0",
         "model": args.model,
         "provider": args.provider,
         "evaluated_at": datetime.utcnow().isoformat() + "Z",
@@ -370,6 +387,7 @@ def run_evaluation(args) -> dict:
         "overall_percentage": f"{overall_score * 100:.1f}%",
         "category_scores": category_summary,
         "difficulty_scores": difficulty_summary,
+        "reasoning_type_scores": reasoning_type_summary,
         "results": results
     }
 
@@ -386,6 +404,10 @@ def run_evaluation(args) -> dict:
     print("  By Difficulty:")
     for diff, info in difficulty_summary.items():
         print(f"    {diff:<15} {info['percentage']:>6}")
+    print()
+    print("  By Reasoning Type:")
+    for rt, info in reasoning_type_summary.items():
+        print(f"    {rt:<22} {info['percentage']:>6}  ({info['count']} questions)")
     print(f"{'='*60}\n")
 
     return report

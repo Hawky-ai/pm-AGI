@@ -42,6 +42,30 @@ CAT_LABELS  = {"meta_ads": "Meta Ads", "google_ads": "Google Ads",
                "critical_thinking": "Critical Thinking", "action_based": "Action-Based"}
 CAT_ICONS   = {"meta_ads": "🟦", "google_ads": "🟩", "critical_thinking": "🟨", "action_based": "🟥"}
 
+# v2: reasoning_type dimension — what kind of thinking each question tests
+REASONING_TYPES = ["recall", "adversarial", "diagnostic", "quantitative", "creative_strategy"]
+REASONING_LABELS = {
+    "recall": "Knowledge Recall",
+    "adversarial": "Adversarial / Trap",
+    "diagnostic": "Diagnostic Reasoning",
+    "quantitative": "Quantitative Tradeoffs",
+    "creative_strategy": "Creative & Experiment Design",
+}
+REASONING_COLORS = {
+    "recall": "#6B7280",
+    "adversarial": "#DC2626",
+    "diagnostic": "#2563EB",
+    "quantitative": "#16A34A",
+    "creative_strategy": "#7C3AED",
+}
+REASONING_DESC = {
+    "recall": "Tests platform knowledge and best-practice recall. 'What is X?', 'Which setting does Y?'",
+    "adversarial": "Trap questions with plausible distractors. Tests whether the model genuinely reasons vs. pattern-matches outdated 2019-era best practices.",
+    "diagnostic": "Multi-step diagnostic reasoning. Given anomalous data, reason through audience, creative, bidding, tracking causes to a root cause.",
+    "quantitative": "Budget allocation & quantitative tradeoffs. Math + strategy + stating assumptions. Marginal ROAS, incrementality, LTV-based targets.",
+    "creative_strategy": "Creative strategy & experiment design. A/B test design, iteration plans, audience hypotheses, incrementality test setup.",
+}
+
 SUBCATEGORY_GROUPS = {
     "Meta Ads":         ["campaign_structure","audience_targeting","bidding_strategy","creative_performance","measurement","advantage_plus"],
     "Google Ads":       ["quality_score","smart_bidding","performance_max","keyword_strategy","attribution"],
@@ -212,6 +236,73 @@ def chart_difficulty(results):
         margin=dict(l=40,r=20,t=70,b=90), font=dict(family="Inter, sans-serif"),
     )
     return fig
+
+def chart_reasoning_types(results):
+    """v2: per-model breakdown by reasoning_type — separates recall from genuine reasoning."""
+    if not results:
+        return go.Figure()
+    models = [r["model"] for r in results]
+    fig = go.Figure()
+    for rt in REASONING_TYPES:
+        scores = [round(r.get("reasoning_type_scores", {}).get(rt, {}).get("score", 0) * 100, 1) for r in results]
+        fig.add_trace(go.Bar(
+            name=REASONING_LABELS[rt],
+            x=models,
+            y=scores,
+            marker_color=REASONING_COLORS[rt],
+        ))
+    fig.update_layout(
+        barmode="group",
+        title=dict(text="Score by Reasoning Type — Recall vs Real Reasoning", font=dict(size=14)),
+        xaxis=dict(tickangle=-30),
+        yaxis=dict(range=[0, 108], gridcolor="#f0f0f0"),
+        plot_bgcolor="white", paper_bgcolor="white", height=420,
+        legend=dict(orientation="h", y=1.15, x=1, xanchor="right"),
+        margin=dict(l=40, r=20, t=80, b=110),
+        font=dict(family="Inter, sans-serif"),
+    )
+    return fig
+
+def reasoning_type_cards_html(results):
+    """v2: explainer cards for each reasoning type with per-model rankings."""
+    html = ""
+    for rt in REASONING_TYPES:
+        scores = [(r["model"], r.get("reasoning_type_scores", {}).get(rt, {}).get("score", 0)) for r in results]
+        scores.sort(key=lambda x: x[1], reverse=True)
+        top_model, top_score = scores[0] if scores else ("—", 0)
+        avg = sum(s for _, s in scores) / len(scores) if scores else 0
+        color = REASONING_COLORS[rt]
+        bars = "".join([f"""
+          <div style="display:flex;align-items:center;gap:8px;margin:5px 0;">
+            <span style="width:170px;font-size:11.5px;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{m}</span>
+            <div style="flex:1;background:#f3f4f6;border-radius:4px;height:16px;">
+              <div style="width:{round(s*100,1)}%;background:{color};border-radius:4px;height:100%;"></div>
+            </div>
+            <span style="width:42px;text-align:right;font-size:11.5px;font-weight:600;color:#111827;">{round(s*100,1)}%</span>
+          </div>""" for m, s in scores])
+        html += f"""
+        <div style="background:white;border:1px solid #e5e7eb;border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+          <div style="display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;">
+            <div style="width:6px;background:{color};border-radius:3px;align-self:stretch;"></div>
+            <div>
+              <h3 style="margin:0 0 5px;font-size:1.05em;color:#111827;">{REASONING_LABELS[rt]}</h3>
+              <p style="margin:0;color:#6b7280;font-size:0.88em;line-height:1.5;">{REASONING_DESC[rt]}</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:14px;">
+            <div style="background:#eff6ff;border-radius:8px;padding:10px 16px;text-align:center;">
+              <div style="font-size:0.72em;color:#2563eb;font-weight:600;">Top Model</div>
+              <div style="font-size:0.95em;font-weight:700;color:#1e40af;">{top_model}</div>
+              <div style="font-size:0.82em;color:#3b82f6;">{round(top_score*100,1)}%</div>
+            </div>
+            <div style="background:#f5f3ff;border-radius:8px;padding:10px 16px;text-align:center;">
+              <div style="font-size:0.72em;color:#7c3aed;font-weight:600;">Avg All Models</div>
+              <div style="font-size:0.95em;font-weight:700;color:#5b21b6;">{round(avg*100,1)}%</div>
+            </div>
+          </div>
+          {bars}
+        </div>"""
+    return html
 
 def chart_mcq_vs_action(results):
     models = [r["model"] for r in results]
@@ -413,10 +504,10 @@ HEADER = """
     </div>
   </div>
   <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;">
-    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟦 Meta Ads · 30 Qs</span>
-    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟩 Google Ads · 30 Qs</span>
-    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟨 Critical Thinking · 20 Qs</span>
-    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟥 Action-Based · 20 Qs</span>
+    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">v2 · 494 Questions</span>
+    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟦 Meta Ads · 227 Qs</span>
+    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🟩 Google Ads · 227 Qs</span>
+    <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">🧠 5 Reasoning Types</span>
     <span style="background:rgba(255,255,255,0.15);padding:3px 11px;border-radius:20px;font-size:0.78em;">MIT License · Open Source</span>
   </div>
 </div>
@@ -526,15 +617,15 @@ def create_app():
                 with gr.Row():
                     refresh_btn = gr.Button("🔄 Refresh", size="sm", variant="secondary", scale=0)
                 lb_table = gr.DataFrame(value=build_main_df(results), interactive=False, wrap=True)
-                gr.Plot(value=chart_overall(results))
+                overall_plot = gr.Plot(value=chart_overall(results))
                 with gr.Row():
-                    with gr.Column(): gr.Plot(value=chart_difficulty(results))
-                    with gr.Column(): gr.Plot(value=chart_mcq_vs_action(results))
+                    with gr.Column(): difficulty_plot = gr.Plot(value=chart_difficulty(results))
+                    with gr.Column(): mcq_plot = gr.Plot(value=chart_mcq_vs_action(results))
 
                 def do_refresh():
                     r = load_results()
                     return build_main_df(r), stats_html(r), chart_overall(r), chart_difficulty(r), chart_mcq_vs_action(r)
-                refresh_btn.click(do_refresh, outputs=[lb_table, stats_box, gr.Plot(), gr.Plot(), gr.Plot()])
+                refresh_btn.click(do_refresh, outputs=[lb_table, stats_box, overall_plot, difficulty_plot, mcq_plot])
 
             # ── 2. Category Deep Dive ───────────────────────────────────────
             with gr.Tab("📊 Category Deep Dive"):
@@ -558,6 +649,23 @@ def create_app():
                     if rows_p:
                         gr.Markdown(f"#### {PROVIDER_LOGOS.get(provider,'⚪')} {provider}")
                         gr.DataFrame(value=pd.DataFrame(rows_p), interactive=False)
+
+            # ── v2: Reasoning Types ─────────────────────────────────────────
+            with gr.Tab("🧠 Reasoning Types"):
+                gr.Markdown("""
+### Reasoning Type Analysis (v2)
+
+PM-AGI v2 separates **knowledge recall** from genuine **reasoning**. A model that scores 90% on recall may score 50% on adversarial / diagnostic / quantitative / creative-strategy questions — that gap is what this benchmark is designed to surface.
+
+Five reasoning categories:
+- **Recall** — platform knowledge & best-practice MCQs
+- **Adversarial** — trap questions with plausible distractors that pattern-match outdated playbooks
+- **Diagnostic** — multi-step root-cause reasoning over anomalous campaign data
+- **Quantitative** — budget allocation, marginal ROAS, LTV math, stated assumptions
+- **Creative Strategy** — A/B test design, experiment methodology, iteration systems
+""")
+                gr.Plot(value=chart_reasoning_types(results))
+                gr.HTML(reasoning_type_cards_html(results))
 
             # ── 4. Critical Thinking ────────────────────────────────────────
             with gr.Tab("🧠 Critical Thinking"):
@@ -762,35 +870,53 @@ Then upload the JSON file below to validate it, and open a Pull Request.
             # ── 7. About ────────────────────────────────────────────────────
             with gr.Tab("ℹ️ About"):
                 gr.Markdown("""
-## About PM-AGI Benchmark
+## About PM-AGI Benchmark v2
 
-**PM-AGI** is the first open-source benchmark for evaluating LLMs on **performance marketing** —
-the discipline of running, optimizing, and scaling paid advertising on Meta and Google.
+**PM-AGI** is the open-source benchmark for evaluating LLMs on **performance marketing reasoning** — the discipline of running, optimizing, and scaling paid advertising on Meta and Google.
 
-### Why It Matters
-LLMs are increasingly used by performance marketers to analyse data, troubleshoot campaigns,
-and make optimization decisions. PM-AGI measures whether they can actually do this reliably.
+### Why v2 Matters
+LLMs are increasingly used by performance marketers to analyse data, troubleshoot campaigns, and make optimization decisions. v1 (100 questions) measured baseline knowledge. **v2 (494 questions) is built to measure genuine reasoning** — multi-step diagnostic, quantitative tradeoff analysis, creative experiment design, and resistance to adversarial trap questions that pattern-match outdated 2019-era playbooks.
 
-### Benchmark Structure
+A model that scores 90% on knowledge recall may score 50% on diagnostic + adversarial — pm-agi v2 surfaces exactly that gap.
+
+### Benchmark Structure (v2)
 
 | Category | Qs | What It Tests |
 |---|---|---|
-| 🟦 **Meta Ads** | 30 | Campaign structure, targeting, bidding, creative, CAPI, Advantage+ |
-| 🟩 **Google Ads** | 30 | Search, Smart Bidding, PMax, Quality Score, attribution |
-| 🟨 **Critical Thinking** | 20 | Data interpretation, budget decisions, competitive analysis |
-| 🟥 **Action-Based** | 20 | Optimization scenarios, troubleshooting, scaling, reporting |
+| 🟦 **Meta Ads** | 227 | Campaign structure, targeting, bidding, creative, CAPI, Advantage+, iOS/SKAN, attribution |
+| 🟩 **Google Ads** | 227 | Search, Smart Bidding, PMax, Quality Score, attribution, Demand Gen, feed quality |
+| 🟨 **Critical Thinking** | 20 | Cross-cutting data interpretation, budget decisions, competitive analysis |
+| 🟥 **Action-Based** | 20 | Real-world optimization scenarios, troubleshooting, scaling |
+
+### Reasoning Types (v2)
+
+| Type | Qs | What It Tests |
+|---|---|---|
+| 🔘 **Recall** | 219 | Platform knowledge, best-practice MCQs |
+| 🔴 **Adversarial** | 80 | Trap questions — defeats pattern-matching on outdated playbooks |
+| 🔵 **Diagnostic** | 69 | Multi-step root-cause reasoning over anomalous campaign data |
+| 🟢 **Quantitative** | 70 | Budget allocation, marginal ROAS, LTV math, stated assumptions |
+| 🟣 **Creative Strategy** | 56 | A/B test design, experiment methodology, iteration systems |
 
 ### Scoring
-- **MCQ** (63 questions): 1.0 / 0.0 — exact match
-- **Action-Based** (37 questions): 0.0–1.0 — LLM-as-judge vs expert rubric
-- **Overall** = weighted average across all 100 questions
+- **MCQ** (302 questions): 1.0 / 0.0 — exact match
+- **Open-Ended** (192 questions): 0.0–1.0 — LLM-as-judge vs expert rubric (5–10 criteria per question)
+- **Overall** = weighted average; per-category and per-reasoning-type breakdowns surface model strengths/weaknesses
+
+### What's New in v2 (2026)
+- 5x dataset expansion: 100 → 494 questions
+- New `reasoning_type` schema field — separates recall from real reasoning
+- Adversarial questions test whether models reject 2019-era playbooks (broad-match-+-Smart-Bidding > SKAGs, broad targeting > interest stacking, etc.)
+- Quantitative open-ended questions require stating assumptions, not just answers
+- Creative-strategy questions test experiment design rigor (Experiments tool, geo holdouts, power analysis, pre-committed decision rules)
 
 ### Roadmap
-- [ ] TikTok Ads category (Q3 2025)
-- [ ] LinkedIn Ads category (Q3 2025)
-- [ ] Amazon Ads category (Q4 2025)
-- [ ] 500-question expanded benchmark
-- [ ] Automated CI evaluation pipeline
+- [ ] Quarterly v2 dataset refresh as platform features evolve
+- [ ] TikTok Ads category (v3)
+- [ ] LinkedIn Ads category (v3)
+- [ ] Amazon Ads category (v3)
+- [ ] Multi-modal evaluation (image + creative analysis)
+- [ ] Automated CI evaluation pipeline for new model releases
 
 ---
 
